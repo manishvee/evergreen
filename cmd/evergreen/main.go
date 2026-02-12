@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"net/http"
 )
 
 const (
@@ -85,11 +86,14 @@ func (fs *FileStore) WritePage(p *Page, pageNum int64) error {
 	return nil
 }
 
+func rootHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "test")
+}
+
 func main() {
-	f, _ := NewFileStore("test")
-	p := NewPage()
-	f.WritePage(p, 0)
-	p2 := NewPage()
-	f.WritePage(p2, 0)
-	fmt.Print(p2)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", rootHandler)
+
+	fmt.Println("server listening on port 5225")
+	http.ListenAndServe(":5225", mux)
 }
